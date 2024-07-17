@@ -1,0 +1,1 @@
+# J.A.M - Just AppImage Manager
