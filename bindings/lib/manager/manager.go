@@ -48,8 +48,6 @@ func CreateFolderAndFile(name string, file bool) {
 
 			f.Close()
 
-		} else {
-			fmt.Printf("%s file already exist \n", name)
 		}
 
 	} else {
@@ -61,8 +59,6 @@ func CreateFolderAndFile(name string, file bool) {
 				fmt.Println(err)
 			}
 
-		} else {
-			fmt.Printf("%s folder already exist \n", name)
 		}
 
 	}

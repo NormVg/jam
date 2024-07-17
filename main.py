@@ -33,25 +33,82 @@ def install(name: Annotated[Optional[str], typer.Argument()] = None,file: Annota
     if not version:
         version = terminal.ask("App version", default="i-dont-care")
     
+    yn = terminal.confirm("do you want to install "+name+" ?" )    
+    if yn:
+        apInstall(name,file,icon,version)
+        terminal.good(f"{name} install successfully.")
+    else:
+        terminal.error("Operation cancelled")
     
-    apInstall(name,file,icon,version)
                 
 
 #this is for removing APP
 @app.command()
-def rm(name: str):
-    apRemove()
+def rm(id:  Annotated[Optional[str], typer.Argument()] = None):
+    if not id:
+        json_data = apList()
+        app = []
+        for i in json_data:
+            app.append(f"{i['name']} - {i['id']} - {i['version']}")
+        choosen = terminal.mcq(app,"Choose Your App to Delete")
+        id = str(choosen).split(" - ")[1]
+        name = str(choosen).split(" - ")[0]
+    yn = terminal.confirm("do you want to remove "+name+" ?" )    
+    if yn:
+        apRemove(id)
+        terminal.good(f"{name} removed successfully.")
+    else:
+        terminal.error("Operation cancelled")
 
 # this is for listing alll the APP
 @app.command()
 def list():
 
-    apList()
+    json_data = apList()
+    app = []
+    for i in json_data:
+        app.append([i['name'],i['id'],i['version'],i['file']])
+    terminal.table("AppImage App's List",["Name","ID","Version","AppImage File"],app)
 
 # this is for updateing app registry
 @app.command()
-def update(name: str):
-    apUpdate()
+def update(id:  Annotated[Optional[str], typer.Argument()] = None, name: Annotated[Optional[str], typer.Argument()] = None,file: Annotated[Optional[str], typer.Argument()] = None,icon: Annotated[Optional[str], typer.Argument()] = None,version:  Annotated[Optional[str], typer.Argument()] = None):
+    
+    default = None
+    
+
+    if not id:
+        json_data = apList()
+        app = []
+        for i in json_data:
+            app.append(f"{i['name']} - {i['id']} - {i['version']}")
+        choosen = terminal.mcq(app,"Choose Your App to Delete")
+        id = str(choosen).split(" - ")[1]
+        for i in json_data:
+            if i['id'] == id:
+                default = i
+            
+    
+    if not name:
+        name = terminal.ask("App Name",default=default['name'])    
+    if not file:
+        file = terminal.ask("AppImage File path",default=default['file'])
+    if not icon:
+        icon = terminal.ask("App icon path",default=default['icon'])
+        
+    if not version:
+        version = terminal.ask("App version", default=default['version'])
+    
+    
+    
+    yn = terminal.confirm("do you want to update "+name+" ?" )    
+    if yn:
+        apUpdate(name,file,icon,version)
+        terminal.good(f"{name} updated successfully.")
+    else:
+        terminal.error("Operation cancelled")
+
+    
 
 
 @app.command()

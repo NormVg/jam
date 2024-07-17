@@ -5,6 +5,8 @@ from rich.console import Console
 from rich.theme import Theme
 from rich.prompt import Prompt ,Confirm
 from rich.markdown import Markdown
+from rich.table import Table
+
 
 from yaspin import yaspin
 
@@ -80,3 +82,14 @@ class terminal:
         spinner = yaspin(text=txt,color="yellow")
         spinner.start()
         return spinner
+
+    def table(name:str,column:list , row: list):
+        table = Table(title=name,expand=True,title_style="ok")
+        
+        for i in column:
+            table.add_column(i, justify="center", style="red", no_wrap=False,overflow="fold")
+        
+        for x in row:
+            table.add_row(*x)
+
+        console.print(table)

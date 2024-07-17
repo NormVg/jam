@@ -5,8 +5,10 @@ import (
 	"fmt"
 )
 import (
+	"encoding/json"
 	"jam/lib/db"
 	manager "jam/lib/manager"
+	"log"
 )
 
 func SetUpApp() {
@@ -34,22 +36,34 @@ func apinstall(pyname *C.char, pyfile *C.char, pyicon *C.char, pyversion *C.char
 }
 
 //export aplist
-func aplist() {
+func aplist() *C.char {
 	SetUpApp()
+	mydb := db.AppDbList()
 
-	fmt.Println("list command in go")
+	jsonData, err := json.Marshal(mydb)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return C.CString(string(jsonData))
 }
 
 //export apremove
-func apremove() {
+func apremove(pyid *C.char) {
 	SetUpApp()
-	fmt.Println("remove command in go")
+	id := C.GoString(pyid)
+	db.PopDB(id)
 }
 
 //export apupdate
-func apupdate() {
+func apupdate(pyname *C.char, pyfile *C.char, pyicon *C.char, pyversion *C.char, pyid *C.char) {
 	SetUpApp()
-	fmt.Println("update command in go")
+	name := C.GoString(pyname)
+	file := C.GoString(pyfile)
+	icon := C.GoString(pyicon)
+	version := C.GoString(pyversion)
+	id := C.GoString(pyid)
+	fmt.Println("update command in go", name, file, version, icon, id)
 }
 
 //export ping

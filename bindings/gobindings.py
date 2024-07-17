@@ -1,5 +1,5 @@
 import ctypes
-
+import json
 library = ctypes.cdll.LoadLibrary('./bindings/library.so')
 
 def Ping():
@@ -26,10 +26,17 @@ def apInstall(name:str,file:str,icon:str,version:str):
 
 def apList():
     
-    library.aplist()
+    APlist = library.aplist
+    APlist.restype = ctypes.c_char_p
+    json_data = APlist()
+    json_data = json.loads(json_data.decode('utf-8'))
+    return json_data
 
-def apRemove():
-    library.apremove()
+def apRemove(id):
+    
+    goapRemove = library.apremove
+    goapRemove.argtypes = [ctypes.c_char_p]
+    goapRemove(id.encode('utf-8'))
 
 def apUpdate():
     library.apupdate()

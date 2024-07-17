@@ -17,12 +17,6 @@ type AppImageReg struct {
 	Version    string `json:"version"`
 }
 
-type AppListItem struct {
-	Name    string `json:"name"`
-	File    string `json:"file"`
-	Version string `json:"version"`
-}
-
 func GetDbfilePath() string {
 	homeDir := manager.GetHomeDir()
 	return homeDir + "/Application/jam_db/db.json"
@@ -68,15 +62,26 @@ func AppendDB(name, icon, file, dotDesktop, version, id string) {
 }
 
 func PopDB(id string) {
+	db := Readjsondb()
+	var newDb []AppImageReg
+
+	for _, x := range db {
+		if x.ID != id {
+			newDb = append(newDb, AppImageReg{Name: x.Name, Icon: x.Icon, DotDesktop: x.DotDesktop, Version: x.Version, ID: x.ID, File: x.File})
+		}
+	}
+
+	// fmt.Println(newDb)
+	WritejsonDb(newDb)
 
 }
 
-func AppDbList() []AppListItem {
+func AppDbList() []AppImageReg {
 	db := Readjsondb()
-	var AppList []AppListItem
+	var AppList []AppImageReg
 
-	for _, i := range db {
-		append(AppList, AppListItem{Name: i.Name, File: i.File, Version: i.Version})
+	for _, x := range db {
+		AppList = append(AppList, AppImageReg{Name: x.Name, Icon: x.Icon, DotDesktop: x.DotDesktop, Version: x.Version, ID: x.ID, File: x.File})
 	}
 	return AppList
 }
