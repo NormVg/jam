@@ -1,6 +1,6 @@
 import os
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-os.system(f"cd {ROOT_DIR}/bindings && go build -buildmode=c-shared -o library.so main.go && cd ..")
+#os.system(f"cd {ROOT_DIR}/bindings && go build -buildmode=c-shared -o library.so main.go && cd ..")
 
 import typer
 from typing import Optional
@@ -10,7 +10,7 @@ from bindings.gobindings import apInstall,apList,apRemove,apUpdate ,Ping
 # from plugs.mytui.terminal import ask
 from plugs.mytui import terminal
 
-
+import sys
 
 
 app = typer.Typer()
@@ -100,13 +100,16 @@ def update(id:  Annotated[Optional[str], typer.Argument()] = None, name: Annotat
         version = terminal.ask("App version", default=default['version'])
     
     
+    if name != default['name'] or file != default['file']  or icon != default['icon'] or version != default['version']:
     
-    yn = terminal.confirm("do you want to update "+name+" ?" )    
-    if yn:
-        apUpdate(name,file,icon,version)
-        terminal.good(f"{name} updated successfully.")
+        yn = terminal.confirm("do you want to update "+name+" ?" )    
+        if yn:
+            print(name,file,icon,version)
+            terminal.good(f"{name} updated successfully.")
+        else:
+            terminal.error("Operation cancelled")
     else:
-        terminal.error("Operation cancelled")
+        terminal.error("Nothing changes, Not Updating DB")
 
     
 
@@ -116,5 +119,22 @@ def ping():
     Ping()
 
 
+def Home():
+    print('''
+     ▄▄▄ ▄▄▄▄▄▄ ▄▄   ▄▄ 
+    █   █      █  █▄█  █
+    █   █  ▄   █       █
+ ▄  █   █ █▄█  █       █
+█ █▄█   █      █       █
+█       █  ▄   █ ██▄██ █
+█▄▄▄▄▄▄▄█▄█ █▄▄█▄█   █▄█ 
+''')
+
+
 if __name__ == "__main__":
-    app()
+    
+    if len(sys.argv) != 1:
+        app()
+    else:
+        typer.run(Home)
+

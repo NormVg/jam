@@ -1,6 +1,7 @@
 import ctypes
-import json
-library = ctypes.cdll.LoadLibrary('./bindings/library.so')
+import json,os
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+library = ctypes.cdll.LoadLibrary(f'{ROOT_DIR}/library.so')
 
 def Ping():
     farewell = library.ping

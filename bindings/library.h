@@ -77,7 +77,7 @@ extern "C" {
 extern void apinstall(char* pyname, char* pyfile, char* pyicon, char* pyversion);
 extern char* aplist();
 extern void apremove(char* pyid);
-extern void apupdate();
+extern void apupdate(char* pyname, char* pyfile, char* pyicon, char* pyversion, char* pyid);
 extern char* ping();
 
 #ifdef __cplusplus
