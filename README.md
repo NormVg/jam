@@ -19,7 +19,7 @@ wget https://github.com/NormVg/jam/releases/download/v1.0.0/jam.zip
 
 unzip jam.zip
 
-cd jam.zip
+cd jam
 
 chmod +x ./install.sh
 
