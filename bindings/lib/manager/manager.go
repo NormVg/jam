@@ -82,7 +82,7 @@ func WriteDotDesktop(name, Config string) string {
 	homeDir := GetHomeDir()
 	myDotPath := homeDir + "/.local/share/applications/jam/" + name + "-" + randID + ".desktop"
 	WriteMyFile(myDotPath, Config)
-	fmt.Println(name)
+
 	return myDotPath
 }
 

@@ -2,7 +2,6 @@ package main
 
 import (
 	"C"
-	"fmt"
 )
 import (
 	"encoding/json"
@@ -26,8 +25,6 @@ func apinstall(pyname *C.char, pyfile *C.char, pyicon *C.char, pyversion *C.char
 	icon := C.GoString(pyicon)
 	version := C.GoString(pyversion)
 
-	fmt.Println(version, name, file, icon)
-
 	file, id := manager.MoveAppImageFile(file, name)
 	icon = manager.MoveAppImageIconFile(icon, name)
 	myDotPath := manager.CreateDotDesktopFile(name, file, icon, version)
@@ -46,6 +43,7 @@ func aplist() *C.char {
 	}
 
 	return C.CString(string(jsonData))
+
 }
 
 //export apremove
@@ -56,14 +54,23 @@ func apremove(pyid *C.char) {
 }
 
 //export apupdate
-func apupdate(pyname *C.char, pyfile *C.char, pyicon *C.char, pyversion *C.char, pyid *C.char) {
+func apupdate(pyname, pyfile, pyicon, pyversion, pyid *C.char) {
 	SetUpApp()
 	name := C.GoString(pyname)
 	file := C.GoString(pyfile)
 	icon := C.GoString(pyicon)
 	version := C.GoString(pyversion)
 	id := C.GoString(pyid)
-	fmt.Println("update command in go", name, file, version, icon, id)
+
+	fileNew, idNew := manager.MoveAppImageFile(file, name)
+
+	iconNew := manager.MoveAppImageIconFile(icon, name)
+
+	myDotPathNew := manager.CreateDotDesktopFile(name, fileNew, iconNew, version)
+
+	db.PopDB(id)
+
+	db.AppendDB(name, iconNew, fileNew, myDotPathNew, version, idNew)
 }
 
 //export ping

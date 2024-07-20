@@ -17,9 +17,9 @@ def Ping():
 
 def apInstall(name:str,file:str,icon:str,version:str):
     
-    print("on AP funtion ",name,file,icon,version,"\n")
+    #print("on AP funtion ",name,file,icon,version,"\n")
 
-    print("_-"*10,"GO LANG CODE","-_"*10,"\n")
+    #print("_-"*10,"GO LANG CODE","-_"*10,"\n")
 
     goapinstall = library.apinstall
     goapinstall.argtypes = [ctypes.c_char_p]
@@ -39,6 +39,8 @@ def apRemove(id):
     goapRemove.argtypes = [ctypes.c_char_p]
     goapRemove(id.encode('utf-8'))
 
-def apUpdate():
-    library.apupdate()
+def apUpdate(name, file, icon, version, id):
+    AP_Update = library.apupdate
+    AP_Update.argtypes = [ctypes.c_char_p]
 
+    AP_Update(name.encode('utf-8'),file.encode('utf-8'),icon.encode('utf-8'),version.encode('utf-8'),id.encode('utf-8'))    

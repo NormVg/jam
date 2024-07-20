@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	manager "jam/lib/manager"
+	"log"
 	"os"
 )
 
@@ -68,20 +69,43 @@ func PopDB(id string) {
 	for _, x := range db {
 		if x.ID != id {
 			newDb = append(newDb, AppImageReg{Name: x.Name, Icon: x.Icon, DotDesktop: x.DotDesktop, Version: x.Version, ID: x.ID, File: x.File})
+
+		} else {
+			err := os.Remove(x.DotDesktop)
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			err = os.Remove(x.File)
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			err = os.Remove(x.Icon)
+			if err != nil {
+				log.Fatalln(err)
+			}
 		}
 	}
 
-	// fmt.Println(newDb)
 	WritejsonDb(newDb)
 
 }
 
 func AppDbList() []AppImageReg {
 	db := Readjsondb()
+
 	var AppList []AppImageReg
 
-	for _, x := range db {
-		AppList = append(AppList, AppImageReg{Name: x.Name, Icon: x.Icon, DotDesktop: x.DotDesktop, Version: x.Version, ID: x.ID, File: x.File})
+	if db != nil {
+
+		for _, x := range db {
+			AppList = append(AppList, AppImageReg{Name: x.Name, Icon: x.Icon, DotDesktop: x.DotDesktop, Version: x.Version, ID: x.ID, File: x.File})
+		}
+		return AppList
+
+	} else {
+		return AppList
 	}
-	return AppList
+
 }

@@ -1,26 +1,27 @@
 import os
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-#os.system(f"cd {ROOT_DIR}/bindings && go build -buildmode=c-shared -o library.so main.go && cd ..")
+import sys
 
 import typer
 from typing import Optional
 from typing_extensions import Annotated
 
 from bindings.gobindings import apInstall,apList,apRemove,apUpdate ,Ping
-# from plugs.mytui.terminal import ask
 from plugs.mytui import terminal
 
-import sys
 
 
 app = typer.Typer()
 
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 
 #this is for installeing APP
 @app.command()
-def install(name: Annotated[Optional[str], typer.Argument()] = None,file: Annotated[Optional[str], typer.Argument()] = None,icon: Annotated[Optional[str], typer.Argument()] = None,version:  Annotated[Optional[str], typer.Argument()] = None):
+def install(name: Annotated[Optional[str], typer.Argument()] = None,
+            file: Annotated[Optional[str], typer.Argument()] = None,
+            icon: Annotated[Optional[str], typer.Argument()] = None,
+            version:  Annotated[Optional[str], typer.Argument()] = None):
     
     if not name:
         name = terminal.ask("App Name",required=True)    
@@ -33,10 +34,22 @@ def install(name: Annotated[Optional[str], typer.Argument()] = None,file: Annota
     if not version:
         version = terminal.ask("App version", default="i-dont-care")
     
-    yn = terminal.confirm("do you want to install "+name+" ?" )    
+    name = name.replace(" ","-")
+
+    if " " in file:
+        terminal.error("Spaces in App paths are not allowed. Please rename without spaces.")
+        sys.exit()
+
+    if " " in icon:
+        terminal.error("Spaces in Icon paths are not allowed. Please rename without spaces.")
+        sys.exit()
+    
+
+
+    yn = terminal.confirm(f"Do you want to install {name}?")    
     if yn:
         apInstall(name,file,icon,version)
-        terminal.good(f"{name} install successfully.")
+        terminal.good(f"{name} installed successfully.")
     else:
         terminal.error("Operation cancelled")
     
@@ -45,15 +58,20 @@ def install(name: Annotated[Optional[str], typer.Argument()] = None,file: Annota
 #this is for removing APP
 @app.command()
 def rm(id:  Annotated[Optional[str], typer.Argument()] = None):
+    
+    json_data = apList()
+    if json_data == None:
+        terminal.high("App List is Empty")
+        sys.exit()
+
     if not id:
-        json_data = apList()
         app = []
         for i in json_data:
             app.append(f"{i['name']} - {i['id']} - {i['version']}")
         choosen = terminal.mcq(app,"Choose Your App to Delete")
         id = str(choosen).split(" - ")[1]
         name = str(choosen).split(" - ")[0]
-    yn = terminal.confirm("do you want to remove "+name+" ?" )    
+    yn = terminal.confirm(f"Do you want to remove {name}?")    
     if yn:
         apRemove(id)
         terminal.good(f"{name} removed successfully.")
@@ -63,26 +81,41 @@ def rm(id:  Annotated[Optional[str], typer.Argument()] = None):
 # this is for listing alll the APP
 @app.command()
 def list():
+    print('''
 
+ ╦┬ ┬┌─┐┌┬┐  ╔═╗┌─┐┌─┐╦┌┬┐┌─┐┌─┐┌─┐  ╔╦╗┌─┐┌┐┌┌─┐┌─┐┌─┐┬─┐
+ ║│ │└─┐ │   ╠═╣├─┘├─┘║│││├─┤│ ┬├┤   ║║║├─┤│││├─┤│ ┬├┤ ├┬┘
+╚╝└─┘└─┘ ┴   ╩ ╩┴  ┴  ╩┴ ┴┴ ┴└─┘└─┘  ╩ ╩┴ ┴┘└┘┴ ┴└─┘└─┘┴└─
+    ''')
     json_data = apList()
+    if json_data == None:
+        
+        terminal.high("App List is Empty")
+        sys.exit()
     app = []
     for i in json_data:
         app.append([i['name'],i['id'],i['version'],i['file']])
-    terminal.table("AppImage App's List",["Name","ID","Version","AppImage File"],app)
+    terminal.table("",["Name","ID","Version","AppImage File"],app)
 
 # this is for updateing app registry
 @app.command()
 def update(id:  Annotated[Optional[str], typer.Argument()] = None, name: Annotated[Optional[str], typer.Argument()] = None,file: Annotated[Optional[str], typer.Argument()] = None,icon: Annotated[Optional[str], typer.Argument()] = None,version:  Annotated[Optional[str], typer.Argument()] = None):
     
+    json_data = apList()
+    if json_data == None:
+        
+        terminal.high("App List is Empty")
+        sys.sys.exit()
+    
     default = None
     
 
     if not id:
-        json_data = apList()
+        
         app = []
         for i in json_data:
             app.append(f"{i['name']} - {i['id']} - {i['version']}")
-        choosen = terminal.mcq(app,"Choose Your App to Delete")
+        choosen = terminal.mcq(app,"Choose Your App to Update")
         id = str(choosen).split(" - ")[1]
         for i in json_data:
             if i['id'] == id:
@@ -90,21 +123,33 @@ def update(id:  Annotated[Optional[str], typer.Argument()] = None, name: Annotat
             
     
     if not name:
-        name = terminal.ask("App Name",default=default['name'])    
+        name = terminal.ask("New App Name",default=default['name'])    
     if not file:
-        file = terminal.ask("AppImage File path",default=default['file'])
+        file = terminal.ask("New AppImage File path",default=default['file'])
     if not icon:
-        icon = terminal.ask("App icon path",default=default['icon'])
+        icon = terminal.ask("New App icon path",default=default['icon'])
         
     if not version:
-        version = terminal.ask("App version", default=default['version'])
+        version = terminal.ask("New App version", default=default['version'])
     
-    
+    name = name.replace(" ","-")
+
+    if " " in file:
+        terminal.error("Spaces in App paths are not allowed. Please rename without spaces.")
+        sys.exit()
+
+    if " " in icon:
+        terminal.error("Spaces in Icon paths are not allowed. Please rename without spaces.")
+        sys.exit()
+         
+
+
+
     if name != default['name'] or file != default['file']  or icon != default['icon'] or version != default['version']:
     
         yn = terminal.confirm("do you want to update "+name+" ?" )    
         if yn:
-            print(name,file,icon,version)
+            apUpdate(name,file,icon,version,id)
             terminal.good(f"{name} updated successfully.")
         else:
             terminal.error("Operation cancelled")
@@ -121,13 +166,17 @@ def ping():
 
 def Home():
     print('''
-     ▄▄▄ ▄▄▄▄▄▄ ▄▄   ▄▄ 
-    █   █      █  █▄█  █
-    █   █  ▄   █       █
- ▄  █   █ █▄█  █       █
-█ █▄█   █      █       █
-█       █  ▄   █ ██▄██ █
-█▄▄▄▄▄▄▄█▄█ █▄▄█▄█   █▄█ 
+		     ▄▄▄ ▄▄▄▄▄▄ ▄▄   ▄▄
+		    █   █      █  █▄█  █
+		    █   █  ▄   █       █
+		 ▄  █   █ █▄█  █       █
+		█ █▄█   █      █       █
+		█       █  ▄   █ ██▄██ █
+		█▄▄▄▄▄▄▄█▄█ █▄▄█▄█   █▄█
+
+ ╦┬ ┬┌─┐┌┬┐  ╔═╗┌─┐┌─┐╦┌┬┐┌─┐┌─┐┌─┐  ╔╦╗┌─┐┌┐┌┌─┐┌─┐┌─┐┬─┐
+ ║│ │└─┐ │   ╠═╣├─┘├─┘║│││├─┤│ ┬├┤   ║║║├─┤│││├─┤│ ┬├┤ ├┬┘
+╚╝└─┘└─┘ ┴   ╩ ╩┴  ┴  ╩┴ ┴┴ ┴└─┘└─┘  ╩ ╩┴ ┴┘└┘┴ ┴└─┘└─┘┴└─
 ''')
 
 
