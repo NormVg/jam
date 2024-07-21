@@ -89,9 +89,9 @@ func WriteDotDesktop(name, Config string) string {
 func CreateDotDesktopFile(name, path, icon, version string) string {
 	const file_data = `[Desktop Entry]
 Name= %s
-Comment=shortcut Video Editor software
+Comment= Just AppImage Manager's App
 Exec= %s
-Icon= %s
+Icon=%s
 Version= %s
 Terminal=false
 Type=Application

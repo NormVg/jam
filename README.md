@@ -1,3 +1,11 @@
+		     ▄▄▄ ▄▄▄▄▄▄ ▄▄   ▄▄
+		    █   █      █  █▄█  █
+		    █   █  ▄   █       █
+		 ▄  █   █ █▄█  █       █
+		█ █▄█   █      █       █
+		█       █  ▄   █ ██▄██ █
+		█▄▄▄▄▄▄▄█▄█ █▄▄█▄█   █▄█
+
 # Just AppImage Manager (J.A.M)
 
 Just AppImage Manager (J.A.M) is a CLI tool for sudo installing AppImage packages on Linux. This tool is developed using Python and Go-lang, combined via a shared-C library. The CLI interface leverages Python libraries such as Rich, Typer, Inquirer, and Yaspin, while Go-lang handles the core functionalities.
@@ -8,14 +16,21 @@ Just AppImage Manager (J.A.M) is a CLI tool for sudo installing AppImage package
 |------------------|---------|
 | Arch Linux       | ✅ Tested |
 | Endeavour OS     | ✅ Tested |
+| Pop OS           | ✅ Tested |
+| Ubuntu           | ✅ Tested |
+| Linux Mint       | ✅ Tested |
 | More to be tested soon... | ⏳ |
 
 ## Installation
 
 To install Just AppImage Manager (J.A.M), follow these steps:
 
+### Pre-requirements 
+	- python3
+	- python's venv y
+
 ```sh
-wget https://github.com/NormVg/jam/releases/download/v1.0.2/jam.zip
+wget https://github.com/NormVg/jam/releases/download/v1.0.3/jam.zip
 
 unzip jam.zip
 
