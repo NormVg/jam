@@ -15,11 +15,11 @@ Just AppImage Manager (J.A.M) is a CLI tool for sudo installing AppImage package
 To install Just AppImage Manager (J.A.M), follow these steps:
 
 ```sh
-wget https://github.com/NormVg/jam/releases/download/v1.0.0/jam.zip
+wget https://github.com/NormVg/jam/releases/download/v1.0.2/jam.zip
 
 unzip jam.zip
 
-cd jam
+cd package
 
 chmod +x ./install.sh
 
