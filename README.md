@@ -21,6 +21,11 @@ Just AppImage Manager (J.A.M) is a CLI tool for sudo installing AppImage package
 | Linux Mint       | ✅ Tested |
 | More to be tested soon... | ⏳ |
 
+## TODO
+- edit run command
+- run app from jam
+
+
 ## Installation
 
 To install Just AppImage Manager (J.A.M), follow these steps:
